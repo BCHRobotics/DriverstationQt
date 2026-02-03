@@ -14,6 +14,7 @@ class ControllerManager:
     def __init__(self, deadzone=0.1):
         self.deadzone = deadzone
         self.joystick = None
+        self.selected_controller_index = 0
         self.running = False
         self.thread = None
         
@@ -48,10 +49,12 @@ class ControllerManager:
                 # Check for controller connection/disconnection
                 pygame.event.pump()
                 
-                if pygame.joystick.get_count() > 0:
+                controller_count = pygame.joystick.get_count()
+                
+                if controller_count > 0 and self.selected_controller_index < controller_count:
                     if self.joystick is None:
                         # Controller connected
-                        self.joystick = pygame.joystick.Joystick(0)
+                        self.joystick = pygame.joystick.Joystick(self.selected_controller_index)
                         self.joystick.init()
                         self.controller_name = self.joystick.get_name()
                         print(f"Controller connected: {self.controller_name}")
@@ -115,3 +118,27 @@ class ControllerManager:
     def set_deadzone(self, deadzone):
         """Set joystick deadzone."""
         self.deadzone = deadzone
+    
+    def get_available_controllers(self):
+        """Get list of available USB controllers."""
+        pygame.event.pump()
+        controllers = []
+        count = pygame.joystick.get_count()
+        for i in range(count):
+            try:
+                js = pygame.joystick.Joystick(i)
+                js.init()
+                controllers.append((i, js.get_name()))
+            except Exception as e:
+                print(f"Error reading controller {i}: {e}")
+        return controllers
+    
+    def select_controller(self, index):
+        """Select a specific controller by index."""
+        if self.joystick is not None:
+            self.joystick.quit()
+            self.joystick = None
+        self.selected_controller_index = index
+        self.controller_name = "No Controller"
+        self.axes = []
+        self.buttons = []

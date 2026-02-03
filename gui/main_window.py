@@ -240,8 +240,24 @@ class DriverStationWindow(QMainWindow):
         group_font.setBold(True)
         group.setFont(group_font)
         
-        layout = QHBoxLayout()
+        layout = QVBoxLayout()
         
+        # Controller selector
+        selector_layout = QHBoxLayout()
+        selector_label = QLabel("USB Controller:")
+        base_font = QFont()
+        base_font.setPointSize(12)
+        selector_label.setFont(base_font)
+        selector_layout.addWidget(selector_label)
+        
+        self.controller_combo = QComboBox()
+        self.controller_combo.setFont(base_font)
+        self.controller_combo.currentIndexChanged.connect(self.on_controller_selected)
+        selector_layout.addWidget(self.controller_combo)
+        selector_layout.addStretch()
+        layout.addLayout(selector_layout)
+        
+        # Controller status
         self.controller_status = QLabel("● No Controller")
         self.controller_status.setStyleSheet("color: red; font-weight: bold;")
         layout.addWidget(self.controller_status)
@@ -260,6 +276,11 @@ class DriverStationWindow(QMainWindow):
         self.controller_timer = QTimer()
         self.controller_timer.timeout.connect(self.update_controller)
         self.controller_timer.start(20)
+        
+        # Controller list update timer (1 second)
+        self.controller_list_timer = QTimer()
+        self.controller_list_timer.timeout.connect(self.update_controller_list)
+        self.controller_list_timer.start(1000)
     
     def on_connect_clicked(self):
         """Handle connect button click."""
@@ -426,6 +447,33 @@ class DriverStationWindow(QMainWindow):
             axes = self.controller.get_axes()
             buttons = self.controller.get_buttons()
             self.robot.send_joystick_data(axes, buttons)
+    
+    def update_controller_list(self):
+        """Update the list of available controllers."""
+        available = self.controller.get_available_controllers()
+        
+        # Check if the list has changed
+        current_count = self.controller_combo.count()
+        if len(available) != current_count:
+            # Block signals to avoid triggering selection change
+            self.controller_combo.blockSignals(True)
+            self.controller_combo.clear()
+            
+            if available:
+                for index, name in available:
+                    self.controller_combo.addItem(f"{index}: {name}", index)
+            else:
+                self.controller_combo.addItem("No controllers available", -1)
+            
+            self.controller_combo.blockSignals(False)
+    
+    def on_controller_selected(self, index):
+        """Handle controller selection change."""
+        if index >= 0:
+            controller_index = self.controller_combo.itemData(index)
+            if controller_index >= 0:
+                self.controller.select_controller(controller_index)
+                self.statusBar().showMessage(f"Controller {controller_index} selected")
     
     def closeEvent(self, event):
         """Handle window close event."""
