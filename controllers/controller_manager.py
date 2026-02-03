@@ -47,7 +47,8 @@ class ControllerManager:
         while self.running:
             try:
                 # Check for controller connection/disconnection
-                pygame.event.pump()
+                # Note: pygame.event.pump() is not called here to avoid threading issues on macOS
+                # where event handling must happen on the main thread
                 
                 controller_count = pygame.joystick.get_count()
                 
@@ -121,7 +122,7 @@ class ControllerManager:
     
     def get_available_controllers(self):
         """Get list of available USB controllers."""
-        pygame.event.pump()
+        # Note: pygame.event.pump() is not called here to avoid threading issues on macOS
         controllers = []
         count = pygame.joystick.get_count()
         for i in range(count):
