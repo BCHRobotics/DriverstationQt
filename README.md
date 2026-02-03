@@ -83,8 +83,8 @@ python main.py
 
 ### First Launch
 
-1. Launch the driver station using one of the methods above
-2. Enter your team number (default: 2026)
+1. Launch the driver station using one of the methods above (ensure internet access is available to install requirements)
+2. Enter your team number (default: 2386)
 3. Click "Connect" to connect to your robot
 4. Plug in a PS5 or Xbox controller
 5. Select the desired mode (Teleop, Autonomous, Test)
@@ -120,7 +120,7 @@ Settings are saved to: `~/.frc_driverstation_config.json`
 Default settings:
 ```json
 {
-  "team_number": 2026,
+  "team_number": 2386,
   "connect_on_startup": true,
   "alliance": "blue",
   "station": 1,
@@ -179,7 +179,7 @@ public void teleopPeriodic() {
 1. Verify robot is powered on
 2. Check network connection (WiFi or Ethernet)
 3. Confirm team number is correct
-4. Try ping: `ping 10.TE.AM.2` (e.g., `ping 10.20.26.2` for team 2026)
+4. Try ping: `ping 10.TE.AM.2` (e.g., `ping 10.23.86.2` for team 2026)
 5. Ensure robot code is running and publishing NetworkTables
 
 ### Controller Not Detected
@@ -256,7 +256,7 @@ For testing the GUI without a robot:
 
 ## Credits
 
-Built for FRC Team 2026 using:
+Built for FRC Team 2386 using:
 - PyQt5 for GUI
 - pynetworktables for robot communication
 - pygame for controller support
