@@ -1,0 +1,5 @@
+# FRC Driver Station Requirements
+
+pynetworktables>=2021.0.0
+PyQt5>=5.15.0
+pygame>=2.5.0
